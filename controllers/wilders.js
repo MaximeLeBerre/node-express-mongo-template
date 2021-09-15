@@ -1,61 +1,57 @@
 const WilderModel = require('../models/wilders');
 
 module.exports = {
-    create: (req, res) => {
-        let wilder = new WilderModel({
-            name: req.body.name,
-            lastname: req.body.lastname,
-            age: req.body.age
-        })
-        wilder.save()
-            .then(result => {
-                res.json({result, success: true})
-            }).catch(e => {
-                res.json({err, success: false})
-        })
+    create: async (req, res) => {
+        try{
+            let wilder = new WilderModel({
+                name: req.body.name,
+                lastname: req.body.lastname,
+                age: req.body.age
+            })
+            const result = await wilder.save();
+            return res.json({result, success: true})
+        }catch(e) {
+            return res.json({e, success: false})
+        }
     },
 
-    update: (req, res) => {
-        WilderModel.updateOne({_id: req.params.id}, req.body)
-            .then(wilder => {
-                if (!wilder) res.json({ success: false, result: "No such wilder exists"})
-                res.json({wilder})
-            })
-            .catch(err => {
-                res.json({ success: false, result: err})
-            })
+    update: async (req, res) => {
+        try{
+            const result = await WilderModel.updateOne({_id: req.params.id}, req.body)
+            if (!wilder) return res.json({ success: false, result: "No such wilder exists"})
+            return res.json({result})
+        }catch(e){
+            return res.json({ success: false, result: e})
+        }
     },
 
-    find: (req, res) => {
-        WilderModel.find()
-            .then(wilders => {
-                if (!wilders) res.json({ success: false, 'result': "No wilders found"})
-                res.json({ sucess: true, wilders})
-            })
-            .catch(err => {
-                res.json({ success: false, result: err})
-                console.log(err);
-            })
+    find: async (req, res) => {
+        try{
+            const result = await WilderModel.find();
+            if (!wilders) return res.json({ success: false, 'result': "No wilders found"})
+            return res.json({ sucess: true, result})
+        }catch(e){
+           return res.json({ success: false, result: e})
+        }
     },
 
-    findOne: (req, res) => {
-        WilderModel.findOne({_id: req.params.id})
-            .then(wilder => {
-                if (!wilder) res.json({ success: false, 'result': "No wilder found"})
-                res.json({ sucess: true, wilder})
-            })
-            .catch(err => {
-                res.json({ success: false, result: err})
-                console.log(err);
-            })
+    findOne: async (req, res) => {
+        try{
+            const result = await WilderModel.findOne({_id: req.params.id});
+            if (!wilder) return res.json({ success: false, 'result': "No wilder found"})
+            return res.json({ sucess: true, result})
+        }catch(e){
+            return res.json({ success: false, result: e})
+        }
     },
 
-    delete: (req, res) => {
-        WilderModel.remove({ _id: req.params.id})
-            .then(wilder => {
-                if (!wilder) res.json({ success: false, result: "No wilder with such ID was found" })
-                res.json({ success: true, wilder })
-            })
-            .catch(err => res.json({success: false, result: err}))
+    delete: async (req, res) => {
+        try{
+            const result = await WilderModel.remove({ _id: req.params.id})
+            if (!result) return res.json({ success: false, result: "No wilder with such ID was found" })
+            return res.json({ success: true, result })
+        }catch(e){
+            return res.json({success: false, result: e})
+        }
     }
 }
